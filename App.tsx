@@ -1,118 +1,127 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import {View, Text, Image, StatusBar} from 'react-native';
+import React, {useContext} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Favourites from './components/Favourites';
+import Contact from './components/Contact';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {contactContext} from './contextAPI/ContextApi';
+import {createStackNavigator} from '@react-navigation/stack';
+import CreateContact from './components/CreateContact';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const stack = createStackNavigator();
+const Stacks = () => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <stack.Navigator>
+      <stack.Screen name="Contact" component={Contact} options={{
+        headerShown:false
+      }}/>
+      <stack.Screen name="AddContact" component={CreateContact} options={{
+        headerShown:false
+      }}/>
+    </stack.Navigator>
   );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+};
+const App = () => {
+  const bottom = createBottomTabNavigator();
+  const {contact} = useContext(contactContext);
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+    <NavigationContainer>
+      <StatusBar backgroundColor={'#12372A'} />
+      <bottom.Navigator
+        screenOptions={{
+          tabBarActiveTintColor: 'white',
+          tabBarStyle: {
+            backgroundColor: '#12372A',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+          headerStyle: {
+            backgroundColor: '#12372A',
+            height: 80,
+          },
+        }}>
+        <bottom.Screen
+          name="stack"
+          component={Stacks}
+          options={{
+           
+            tabBarIcon: () => (
+              <MaterialCommunityIcons name="contacts" size={30} color="white" />
+            ),
+            tabBarLabel: '',
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+            headerRight: () => (
+              <Image
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 50 / 2,
+                  marginRight: 10,
+                  resizeMode: 'stretch',
+                  borderWidth: 1,
+                  borderColor: 'white',
+                }}
+                source={{
+                  uri: 'https://images.pexels.com/photos/1760901/pexels-photo-1760901.jpeg?auto=compress&cs=tinysrgb&w=400',
+                }}
+              />
+            ),
+            headerTitle: '',
+            headerTintColor: 'white',
+            headerLeft: () => (
+              <View>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 25,
+                    fontWeight: 'bold',
+                    marginLeft: 10,
+                  }}>
+                  Contacts
+                </Text>
+              </View>
+            ),
+          }}
+        />
+        <bottom.Screen
+          name="Favourties"
+          component={Favourites}
+          options={{
+            tabBarIcon: () => (
+              <MaterialCommunityIcons
+                name="star-outline"
+                size={30}
+                color="white"
+              />
+            ),
+            headerTitle: '',
+            tabBarBadge: contact.length,
+            tabBarBadgeStyle: {
+              color: '#12372A',
+              backgroundColor: 'white',
+              fontWeight: 'bold',
+            },
+            headerTintColor: 'white',
+            tabBarLabel: '',
+            headerLeft: () => (
+              <View>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 25,
+                    fontWeight: 'bold',
+                    marginLeft: 10,
+                  }}>
+                  Favourites
+                </Text>
+              </View>
+            ),
+          }}
+        />
+      </bottom.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default App;
